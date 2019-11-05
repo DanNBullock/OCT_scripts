@@ -5,41 +5,62 @@
 % set different diameters of visual field and extract the thickness
 % information averages within that area.
 
+%this could be a variable input
 subjectDir = 'C:\Users\jjolly.DESKTOP-RGKT43R\Documents\FMRIB\Analysis\OCT_Data';
+
 subjectDirContents = dir(subjectDir)
 fileNames = {subjectDirContents(~[subjectDirContents(:).isdir]).name};
 
 % Extract relevant information from the filenames
 for iFiles=1:length(fileNames)
     currentFileName=fileNames{iFiles};
+    %under the presumption that underscores are used to separate file name components
     underscoreIndexes=strfind(currentFileName,'_');
     
+    %assumes subject id is first name component
     subjectID{iFiles}=currentFileName(1:underscoreIndexes(1)-1);
+    %assumes eye is second name component
     eye{iFiles}=currentFileName(underscoreIndexes(1)+1:underscoreIndexes(2)-1);
 end
 
-% set files paths
+%result is <subjectID> and <eye>, of equal length, indicating for <fileNames> the corresponding subject ID and eye
+
+% set files paths.  Combines <subjectDir> and <fileNames> for a full path to each csv.  ASSUMES ALL FILES IN SUBJECT DIR ARE DESIRED CSVS.
 csvpaths = fullfile(subjectDir,fileNames);
 
 %these are the layers we want to analyse with the associated names
+%THESE WOULD LIKELY BE VARIABLE INPUTS
 analyses={1:7,1:4,5,6};
+%THESE WOULD EITHER BE VARIABLE INPUTS OR TAKEN IN FROM TABLE
 analysesNames={'TT','NL','ONL','PROS'}
 
-% set output path(may need to make the folder)
-outputDir=fullfile(subjectDir,'output');
-%mkdir(output)
+% set output path (may need to make the folder)
+primaryOutputDir=fullfile(subjectDir,'primaryAnalysis');
+%might cause an error, fix later
+if ~isfolder
+    mkdir(primaryOutputDir);
+else
+    fprintf ('primary output directory already exists')
+end
 
 % this extracts the relevant layer values from each subject file and
 % outputs results with the relevant ID and eye details. These are written
 % to new CSVs for each layer we are interested in.
+
+%Begins by iterating over subjects
 for isubjects = 1:length(csvpaths)
     fprintf('\n subject %s' ,subjectID{isubjects}) % displays progress
+    % uses proprietary parseCSVExport to get csv data
     curcsv = parseCsvExport(csvpaths{isubjects});
+    %iterates over analyses
     for iAnalyses=1:length(analysesNames)
         currentLayers=analyses{iAnalyses};
+        %uses <currentLayers> to index across the relevant layers of <curcsv>, notably in the third dimension.  Subsequently sums those layers. 
         outputArray = [sum(curcsv(:,:,currentLayers),3)]';
+        %here we generate the name for this specific analysis/synthesis output, using <subjectID>, <eye>, and <analysesNames>
         outPutName=strcat(subjectID{isubjects},'_',eye{isubjects},'_',analysesNames{iAnalyses});
-        outFileName=strcat(outputDir,'\',outPutName,'.csv');
+        outFileName=strcat(primaryOutputDir,'\',outPutName,'.csv');
+        %here we write the csv out.
         csvwrite(outFileName,outputArray);   
     end
 end
