@@ -35,7 +35,7 @@ analyses={1:7,1:4,5,6};
 analysesNames={'TT','NL','ONL','PROS'}
 
 % set output path (may need to make the folder)
-primaryOutputDir=fullfile(subjectDir,'primaryAnalysis');
+primaryOutputDir=fullfile(subjectDir,'primaryOutput');
 %might cause an error, fix later
 if ~isfolder
     mkdir(primaryOutputDir);
@@ -68,56 +68,94 @@ end
 % this is setting the foveal point, known as the centroid here. Need to
 % read the slice and position information from Heidelberg and add into the
 % centroid table.
+
+%this could also be an input in a functionalized version of this
 centroidPath='C:\Users\jjolly.DESKTOP-RGKT43R\Documents\FMRIB\Analysis\Location.csv';
+%load the excel file to obtain the centroid data
 centroidTable =readtable(centroidPath);
+%determine the size of <centroidTable>.  This gives us the number of subjects
 tableSize=size(centroidTable);
 
-outputDir;
-outputDirContents = dir(outputDir);
+outputDirContents = dir(primaryOutputDir);
 outputFileNames = {outputDirContents(~[outputDirContents(:).isdir]).name};
 
+%here's the deal with this:  if, on line 62 we had caught each output file name we wouldn't need to do this.  However, here we are being agnostic about what preceeded this part of the analysis.  Theoretically, this will allow us to functionalize things more easily in the future.
 for iOutputFiles=1:length(outputFileNames)
     currentFileName=outputFileNames{iOutputFiles};
+    %finding the indexes of underscores, just as before
     underscoreIndexes=strfind(currentFileName,'_');
+    %here we are finding the last part of the file name.  Theoretically, we could have used the outputs of the function fileparts on the full file path for each file in <primaryOutputDir> 
     dotIndexes=strfind(currentFileName,'.');
     
+    %working under assumption that first name component is subjectID
     outputSubjectID{iOutputFiles}=currentFileName(1:underscoreIndexes(1)-1);
+    %working under assumption that second name component is eye
     outputEye{iOutputFiles}=currentFileName(underscoreIndexes(1)+1:underscoreIndexes(2)-1);
+    %working under assumption that third and last (it makes both assumptions) name component is analysis
     outputAnalysis{iOutputFiles}=currentFileName(underscoreIndexes(2)+1:dotIndexes-1);
 end
 
 %safe assumption about the data about 20 by 20 degree coverage for the MRI
 %project as same scan done. Check how much optics of the eye changes this
 %as may be able to ignore.
+
+%THIS COULD BE A FUNCTION INPUT
+%this value is half the diameter, because you'll be extending the value around the centroid value (on both sides) by the contents of <pixelVec>
+%manually set
 degreeTotal=10; % halve as radius
+%here we are generating a numerical (integer) vector that will help us index the components of the measure we are including in our mean
+
+%A MORE ELEGANT WAY TO DO THIS WOULD BE TO COMPUTE THE VALUE CORRESPONDING TO THE 51 FROM THE DATA ITSELF, IF THIS IS NOT POSSIBLE, THEN MANUAL ENTRY HERE IS THE ONLY OPTION
 pixelVec=[0:51:51*degreeTotal]; % 51 was calculated as the with our scan parameters, 51 pixels in each degree.
 
 % the secondary output gives us the eccentricity information for each eye.
 secondaryOutputDir=fullfile(subjectDir,'secondaryOutput');
-%mkdir(secondaryOutputDir) only need to do this once.
+if ~isfolder(secondaryOutputDir)
+    mkdir(secondaryOutputDir);
+else
+    fprintf('secondary output directory already exists')
+end
 
+%moved this out here, because it doesn't need to be done for every subject, only once
+%here we obtain the entire column under the table heading <Filename>, returns a cell string vector
+centerNames=centroidTable.Filename;
+%Here we are iterating over subjects, as inferred from the first entry in <tableSize>
 for iCentroid=1:tableSize(1)
-    centerNames=centroidTable.Filename;
+    %obtain the file name corresponding to the <iCentroid> entry of the <centroidTable>'s Filename field
+    %NOTE, THIS NEED NOT CORRESPOND TO THE SAME ORDERING AS THE CONTENTS OF <outputFileNames>
+    %in fact we are being agnostic about this ordering here, hence the additional bit with name generation here
     currentCenterName=centerNames{iCentroid};
     
+    %finding the underscores in the name, just as before
     underscoreIndexes=strfind(currentCenterName,'_');
     
+    %operating under the assumption that first name component is subject ID
     currentSubjectID=currentCenterName(1:underscoreIndexes(1)-1);
+    %operating under the assumption that second name component is eye 
     currentEye=currentCenterName(underscoreIndexes(1)+1:underscoreIndexes(2)-1);
+    %<currentAnalysis> is not used, likely because we are assuming that if a subject and eye combination exists, so to does all analyses for it
+    %NOTE:  IF THIS ASSUMPTION DOES NOT HOLD, IT WOULD BE NECESSARY TO GENERATE THIS FOR LATER ITERATION
     %currentAnalysis=currentFileName(underscoreIndexes(2)+1:dotIndexes-1);
     
     %make sure the centroid is chosen for the right subjects and eyes
+    %creates a boolean vector corresponding to the variable outputSubjectID
     validSubjects=strcmp(currentSubjectID,outputSubjectID);
+    %creates a boolean vector corresponding to the variable outputEye
     validEye=strcmp(currentEye,outputEye);
     
+    %apply both criteria to narrow down the valid analysis files
+    %NOTE, IN THE CASE WHERE YOU DIDN'T HAVE ALL ANALYSES FOR A SUBJECT, THIS IS WHERE YOU WOULD APPLY A <validAnalysis> bool variable, after generation
     currentAnalysisBool=and(validSubjects,validEye);
     
     % set X and Y
+    % be careful though because there appears to be a mismatch between our intuitions about x and y and the standard indexing practices of matlab
     currentXVal=centroidTable.position(iCentroid);
     currentYVal=centroidTable.slice(iCentroid);
     
+    %returns the indexes
     analysesIndexes=find(currentAnalysisBool);
     
+    %iterates across the indexes of <analysesIndexes> .  The working presumption here is that length(analysesIndexes) always == 4
     for iCurrentAnalyses=1:length(analysesIndexes)
         analysisFileName=strcat(outputSubjectID{analysesIndexes(iCurrentAnalyses)},'_',outputEye{analysesIndexes(iCurrentAnalyses)},'_',outputAnalysis{analysesIndexes(iCurrentAnalyses)},'.csv');
         currentAnalysisData=csvread(fullfile(outputDir,analysisFileName));
