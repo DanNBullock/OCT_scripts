@@ -153,42 +153,56 @@ for iCentroid=1:tableSize(1)
     currentYVal=centroidTable.slice(iCentroid);
     
     %returns the indexes
+    %actually, this may actually make the function robust against instances where there isn't a full set of analyses.
     analysesIndexes=find(currentAnalysisBool);
     
     %iterates across the indexes of <analysesIndexes> .  The working presumption here is that length(analysesIndexes) always == 4
     for iCurrentAnalyses=1:length(analysesIndexes)
+        
+        %generates name for current analysis file.  Note double indexing using <analysesIndexes(iCurrentAnalyses)>
         analysisFileName=strcat(outputSubjectID{analysesIndexes(iCurrentAnalyses)},'_',outputEye{analysesIndexes(iCurrentAnalyses)},'_',outputAnalysis{analysesIndexes(iCurrentAnalyses)},'.csv');
+        %load corresponding file.  Here we are using fullfile.
         currentAnalysisData=csvread(fullfile(outputDir,analysisFileName));
         
+        %referring back to <layerLabel> so we can sort our table output 
         layerLabel{iCurrentAnalyses}=outputAnalysis{analysesIndexes(iCurrentAnalyses)};
         
         % sort so all files are in alphabetical order otherwise can be
-        % mixed up
+        % mixed up.  We are thus agnostic to input ordering on layerLabel
         [sortedLabels,sortOrder]=sort(layerLabel);
         
         % this rounds down the border
+        %probably need to revisit this at some point
         currentDataSize=size(currentAnalysisData);
+        %NOTE THAT <conversionResize> has two items in it.  This is bad practice.  We fix it in other version of the code by splitting it into <conversionResizeX> <conversionResizeY>
         conversionResize=floor(currentDataSize/(degreeTotal*2));
         
         %NOTE: ITERATING TO degreeTotal-1 IN ORDER TO AVOID CENTROID SHIFT
         %CAUSING AN OUT OF BOUNDS INDEXING
+        %actually, the centroid shift isn't necessarily the problem any more.  because we have the check implmented for x and y later this may not be necessary.
         for iAngles=1:degreeTotal-1
+            %computes current radius in pixels
             xRadius=conversionResize(2)*iAngles;
+            %determines the remainder for the current mathematical operation.
+            %NOTE: THE USE OF .05 IS LIKELY BAD PRACTICE AS IT IS HARD CODED.  .05 = 1/20 = 1/(2*<degreeTotal>)
+            %FIX THIS
             xRemainder=iAngles*.05*currentDataSize(2)-conversionResize(2)*iAngles;
             
+            %same for y.
             yRadius=conversionResize(1)*iAngles;
             yRemainder=iAngles*.05*currentDataSize(1)-conversionResize(1)*iAngles;
-            %THIS IS A FIX FOR THE LACK OF GRANULARITY IN THE Y DIMENSION
+            %THIS IS A FIX FOR THE LACK OF GRANULARITY IN THE Y DIMENSION.  We probably dont encounter this issue in the x dimension
             if yRemainder >= conversionResize(1)
                 yRadius=yRadius+floor(yRemainder/conversionResize(1));
             end
             
+            %sets the indexes for the y and x ranges, using the radius and the centroid values
             yRange=[currentYVal-yRadius:currentYVal+yRadius];
             xRange=[currentXVal-xRadius:currentXVal+xRadius];
             
             
             %implement check here, this is to compensate for extreme
-            %eccentricity of centroid
+            %eccentricity of centroid.  Resets boundaries if they are too extreme.  Note, this results in an asymetric mean being computed.
             if or(any(xRange<0),any(xRange>currentDataSize(2)))
                 warning('\n angle %i for subject %s exceeds range -- check centroid eccentricity',iAngles,currentSubjectID)
                 xRange=xRange(and(xRange>0,xRange<currentDataSize(2)));
@@ -205,21 +219,34 @@ for iCentroid=1:tableSize(1)
             
             % This creates the mask over the area of measurement. It is an
             % ellipse calculated accounting for the differential
-            % measurement units in X adn Y direction
+            % measurement units in X and Y direction
+            
+            %set mask as empty array of boolean 0
             matrixMask=false(length(yRange),length(xRange));
             
+            %probably a better way to do this than double iteration, but effective
+            %NOTE, THIS IS A NEAT TRICK WHEREBY WE ONLY ITERATE WITHIN THE BOX CONTAINING THE DEGREE RADIUS OF INTEREST
             for iYrange=1:length(yRange)
                 for iXrange=1:length(xRange)
+                    %gets unit displacement
                     xDisp=xRange(iXrange)-currentXVal;
                     yDisp=yRange(iYrange)-currentYVal;
+                    %gets degree displacement
                     xDispConvert=xDisp/conversionResize(1);
                     yDispConvert=yDisp/conversionResize(2);
+                    %computes hypotenuse and thus distance from centroid
+                    %NOTE, THE REASON WE ARE DOING THIS IS BECAUSE WE CAN ONLY COMPUTE THE HYPOTENUSE IF BOTH DIMENSIONS ARE USING THE SAME UNIT MEASURE
+                    %AS SUCH WE HAVE TO CONVERT BACK TO DEGREES
                     hypot=sqrt(xDispConvert^2+yDispConvert^2);
+                    %sets entry in mask to 1 if it is within the boundary of <iAngles>
                     matrixMask(iYrange,iXrange)=hypot<=iAngles;
                 end
             end
             
+            %obtains all of the data contained within the box as described in line 228
+            %Technically at this point we no longer care where they are, just that they meet the criteria for us being interested in them.
             dataSubset=currentAnalysisData(yRange,xRange);
+            %from this subset, computes the mean and standard deviation
             maskedMean(iCurrentAnalyses,iAngles)=mean(dataSubset(matrixMask));
             maskedStd(iCurrentAnalyses,iAngles)=std(dataSubset(matrixMask));
         end
@@ -227,17 +254,24 @@ for iCentroid=1:tableSize(1)
     end
     
     %resort matricies here
+    
+    % establish empty matricies for sorted output
+    %NOTE: this clears the matrix from the last iteration
     sortedMaskedMean=zeros(size(maskedMean));
     sortedmaskedStd=zeros(size(maskedMean));
+    
+    %store output from previous iteractions.  Here we are resorting using the <sortOrder>
+    % it might be worthwhile to include a fprintf with the <sortOrder> here just to give an indication of when things are being resorted
     for iLabels=1:length(layerLabel)
         sortedMaskedMean(iLabels,:)=maskedMean(sortOrder(iLabels),:);
         sortedmaskedStd(iLabels,:)=maskedStd(sortOrder(iLabels),:);
     end
 
+    %adding the labels as the first column of the cell structure, so that it can function as a table
     meanDataCell=horzcat(sortedLabels',num2cell(maskedMean));
     stdDataCell=horzcat(sortedLabels',num2cell(maskedStd));
     
-    %NOTE degreeTotal-1 USED HERE AGAIN FOR CONSISTENCY
+    %NOTE degreeTotal-1 USED HERE AGAIN FOR CONSISTENCY, this is in keeping with line 183
     varNames=horzcat({'LayerNames'},strcat('degree ',strsplit(num2str(1:degreeTotal-1),' ')));
     
     % create results tables
@@ -246,13 +280,15 @@ for iCentroid=1:tableSize(1)
     
     %WARNING:  THIS ASSIGNMENT USES THE iCurrentAnalyses VARIBLE TO
     %ASSIGN NAMES.  NOT IDEAL, BUT SHOULDN'T CAUSE PROBLEMS.  FIX LATER
+    %find a better/more independently reliable way to generate the names
     meanTableName=strcat(outputSubjectID{analysesIndexes(iCurrentAnalyses)},'_',outputEye{analysesIndexes(iCurrentAnalyses)},'_meanTable.csv');
     stdTableName=strcat(outputSubjectID{analysesIndexes(iCurrentAnalyses)},'_',outputEye{analysesIndexes(iCurrentAnalyses)},'_stdTable.csv');
     
+    %writes them as table
     writetable(meanDataTable,fullfile(secondaryOutputDir,meanTableName))
     writetable(stdDataTable,fullfile(secondaryOutputDir,stdTableName))
     
-    %just in case
+    %just in case they need to be cleared
     clear maskedMean
     clear maskedStd
 end
