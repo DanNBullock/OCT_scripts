@@ -30,11 +30,11 @@ function createCSVsumOutputFiles(subjDataDir,targetOutputDir,layerIndexSequences
 %  none, saves output CSVs to specified directory
 %
 % Adapted from code produced by Dan Bullock and Jasleen Jolley 05 Nov 2019
-% Dan Bullock 22 Jan 2020
+% Extensive rewrite/functionalization by Dan Bullock 22 Jan 2020
 %%  Begin Code
 % initialize relevant variables and perform checks
 
-% set output directory if it isn't defined
+% set output directory to subdirectory of <subjDataDir> if it isn't defined, 
 if isempty(targetOutputDir)
     targetOutputDir=fullfile(subjDataDir,'primaryOutput');
 else

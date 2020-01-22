@@ -1,0 +1,50 @@
+function elipsoidMask=elipsoidMaskFromRangeIndexes(xRange,yRange,centroidXYVal)
+%  elipsoidMask=elipsoidMaskFromRangeIndexes(xRange,yRange,centroidXYVal)
+%
+%  This function creates a elipsoid mask
+%  
+%  INPUTS:
+%  centroidXYVal: Two integers.  The X, Y index of the elipsoid's centroid
+%  within the source data frame.  Ought to correspond to the median value
+%  of <xRange> and <yRange>
+%
+%  xRange: the range of X coordinates spanned by the elipsoid circumscribed
+%  by currDegree
+%
+%  yRange: the range of Y coordinates spanned by the elipsoid circumscribed
+%  by currDegree
+
+% Adapted from code produced by Dan Bullock and Jasleen Jolley 05 Nov 2019
+% Extensive rewrite/functionalization by Dan Bullock 22 Jan 2020
+
+
+%% Begin code
+% set variables and perform checks
+%extract centroid values
+centroidXVal=centroidXYVal(1);
+centroidYVal=centroidXYVal(2);
+
+    %set mask as empty array of boolean 0
+    matrixMask=false(length(yRange),length(xRange));
+    
+    %probably a better way to do this than double iteration, but effective
+    %NOTE, THIS IS A NEAT TRICK WHEREBY WE ONLY ITERATE WITHIN THE BOX
+    %CONTAINING THE DEGREE RADIUS OF INTEREST.  REDUCES COMPUTATIONAL LOAD.
+    for iYrange=1:length(yRange)
+        for iXrange=1:length(xRange)
+            %gets unit displacement
+            xDisp=xRange(iXrange)-centroidXVal;
+            yDisp=yRange(iYrange)-centroidYVal;
+            %gets degree displacement
+            xDispConvert=xDisp/conversionResize(1);
+            yDispConvert=yDisp/conversionResize(2);
+            %computes hypotenuse and thus distance from centroid NOTE, THE
+            %REASON WE ARE DOING THIS IS BECAUSE WE CAN ONLY COMPUTE THE
+            %HYPOTENUSE IF BOTH DIMENSIONS ARE USING THE SAME UNIT MEASURE
+            %AS SUCH WE HAVE TO CONVERT BACK TO DEGREES
+            hypot=sqrt(xDispConvert^2+yDispConvert^2);
+            %sets entry in mask to 1 if it is within the boundary of
+            %<iAngles>
+            matrixMask(iYrange,iXrange)=hypot<=iAngles;
+        end
+    end
