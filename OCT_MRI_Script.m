@@ -6,9 +6,9 @@
 % information averages within that area.
 
 %this could be a variable input
-subjectDir = 'C:\Users\jjolly.DESKTOP-RGKT43R\Documents\FMRIB\Analysis\OCT_Data';
+subjectDir = '/N/u/dnbulloc/Carbonate/OCT_Data/Data';
 
-subjectDirContents = dir(subjectDir)
+subjectDirContents = dir(subjectDir);
 fileNames = {subjectDirContents(~[subjectDirContents(:).isdir]).name};
 
 % Extract relevant information from the filenames
@@ -37,7 +37,7 @@ analysesNames={'TT','NL','ONL','PROS'}
 % set output path (may need to make the folder)
 primaryOutputDir=fullfile(subjectDir,'primaryOutput');
 %might cause an error, fix later
-if ~isfolder
+if ~isfolder(primaryOutputDir)
     mkdir(primaryOutputDir);
 else
     fprintf ('primary output directory already exists')
