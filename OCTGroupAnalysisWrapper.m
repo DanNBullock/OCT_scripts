@@ -1,17 +1,6 @@
-% I moved this here, because I think it makes sense to generate this at this point.  Consistent with previous practice
-% where data for this analysis is coming from
-secondaryOutputDirContents = dir(secondaryOutputDir);
-secondaryOutputFileNames = {secondaryOutputDirContents(~[secondaryOutputDirContents(:).isdir]).name};
+function OCTgroupAnalysis(inputDir,groupKeyDir,outputDir)
 
-for isecondaryOutputFiles=1:length(secondaryOutputFileNames)
-    currentFileName=secondaryOutputFileNames{isecondaryOutputFiles};
-    underscoreIndexes=strfind(currentFileName,'_');
-    dotIndexes=strfind(currentFileName,'.');
-    
-    secondaryOutputSubjectID{isecondaryOutputFiles}=currentFileName(1:underscoreIndexes(1)-1);
-    secondaryOutputEye{isecondaryOutputFiles}=currentFileName(underscoreIndexes(1)+1:underscoreIndexes(2)-1);
-    secondaryOutputAnalysis{isecondaryOutputFiles}=currentFileName(underscoreIndexes(2)+1:dotIndexes-1);
-end
+
 
 
 %group summary statistics
@@ -25,6 +14,26 @@ fileNames = {groupDirContents(~[groupDirContents(:).isdir]).name};
 groupDir='C:\Users\jjolly.DESKTOP-RGKT43R\Documents\FMRIB\Analysis\Groups\';
 groupLabels={'CHM','CHM_Cont','STGD','STGD_Cont'};
 groupAnalysisDir='C:\Users\jjolly.DESKTOP-RGKT43R\Documents\FMRIB\Analysis\GroupAnalysis\';
+
+
+
+
+% I moved this here, because I think it makes sense to generate this at this point.  Consistent with previous practice
+% where data for this analysis is coming from
+secondaryOutputDirContents = dir(inputDir);
+secondaryOutputFileNames = {secondaryOutputDirContents(~[secondaryOutputDirContents(:).isdir]).name};
+
+for isecondaryOutputFiles=1:length(secondaryOutputFileNames)
+    currentFileName=secondaryOutputFileNames{isecondaryOutputFiles};
+    underscoreIndexes=strfind(currentFileName,'_');
+    dotIndexes=strfind(currentFileName,'.');
+    
+    secondaryOutputSubjectID{isecondaryOutputFiles}=currentFileName(1:underscoreIndexes(1)-1);
+    secondaryOutputEye{isecondaryOutputFiles}=currentFileName(underscoreIndexes(1)+1:underscoreIndexes(2)-1);
+    secondaryOutputAnalysis{isecondaryOutputFiles}=currentFileName(underscoreIndexes(2)+1:dotIndexes-1);
+end
+
+
 
 % using the group directory to know which subjects belong in which group
 %iterates across <fileNames>  Which I believe is just several excel files with file-group membership indications

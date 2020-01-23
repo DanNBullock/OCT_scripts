@@ -89,16 +89,16 @@ xRange=[centroidXVal-xRadius:centroidXVal+xRadius];
 %implement check here, this is to compensate for extreme eccentricity of
 %centroid.  Resets boundaries if they are too extreme.  Note, this results
 %in an asymetric mean being computed.
-if or(any(xRange<0),any(xRange>dataXSize))
+if or(any(xRange<=0),any(xRange>dataXSize))
     warning('\n angle %i for current data structure exceeds range -- check centroid eccentricity for x',currDegree)
-    xRange=xRange(and(xRange>0,xRange<dataXSize));
+    xRange=xRange(and(xRange>=0,xRange<dataXSize));
 else
     %do nothing
 end
 
-if or(any(yRange<0),any(yRange>dataYSize))
+if or(any(yRange<=0),any(yRange>dataYSize))
     warning('\n angle %i for current data structure exceeds range -- check centroid eccentricity for y',currDegree)
-    yRange=yRange(and(yRange>0,yRange<dataYSize));
+    yRange=yRange(and(yRange>=0,yRange<dataYSize));
 else
     %do nothing
 end
