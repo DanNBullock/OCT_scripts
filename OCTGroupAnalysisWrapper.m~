@@ -32,7 +32,7 @@ function OCTGroupAnalysisWrapper(inputDir,groupKeyDir,outputDir)
 
 % set output directory to subdirectory of <subjDataDir> if it isn't defined, 
 if isempty(outputDir)
-    outputDir=fullfile(inputDir,'groupAnalysis');
+    outputDir=fullfile(inputDir,'subjectLayerAnalyses');
 else
     %do nothing
 end
@@ -99,15 +99,15 @@ for iGroups=1:length(groupNames)
             %concatting for this group, i.e. the first subject
             if isempty(ODBlockCell)
             %read table in
-                ODBlockTable=readtable(fullfile(inputDir,strcat(currSubjNum,'_OD_meanTable.csv')));
-                OSBlockTable=readtable(fullfile(inputDir,strcat(currSubjNum,'_OS_meanTable.csv')));
+                ODBlockTable=readtable(fullfile(secondaryOutputDir,strcat(currSubjNum,'_OD_meanTable.csv')));
+                OSBlockTable=readtable(strcat(secondaryOutputDir,'\',currSubjNum,'_OS_meanTable.csv'));
                 %convert to cell array.  We need the cell array so we can do math.  Note the use of = rather than cat
                 ODBlockCell=table2cell(ODBlockTable);
                 OSBlockCell=table2cell(OSBlockTable);
             else
             %if it isn't empty, we begin the catting process
-                ODBlockHolder=readtable(fullfile(inputDir,strcat(currSubjNum,'_OD_meanTable.csv')));
-                OSBlockHolder=readtable(fullfile(inputDir,strcat(currSubjNum,'_OS_meanTable.csv')));
+                ODBlockHolder=readtable(strcat(secondaryOutputDir,'\',currSubjNum,'_OD_meanTable.csv'));
+                OSBlockHolder=readtable(strcat(secondaryOutputDir,'\',currSubjNum,'_OS_meanTable.csv'));
                 %now we cat on to the existing object
                 ODBlockCell=cat(3,ODBlockCell,table2cell(ODBlockHolder));
                 OSBlockCell=cat(3,OSBlockCell,table2cell(OSBlockHolder));
@@ -153,10 +153,10 @@ for iGroups=1:length(groupNames)
     %not actually used
     %outputFileStem=strcat(groupAnalysisDir,currentGroup);
     
-    writetable(ODBlockMeanTable,strcat(outputDir,'OD_GroupMean_',currentGroup,'.csv'))
-    writetable(ODBlockStdTable,strcat(outputDir,'OD_StdMean_',currentGroup,'.csv'))
-    writetable(OSBlockMeanTable,strcat(outputDir,'OS_GroupMean_',currentGroup,'.csv'))
-    writetable(OSBlockStdTable,strcat(outputDir,'OS_StdMean_',currentGroup,'.csv'))
+    writetable(ODBlockMeanTable,strcat(groupAnalysisDir,'OD_GroupMean_',currentGroup,'.csv'))
+    writetable(ODBlockStdTable,strcat(groupAnalysisDir,'OD_StdMean_',currentGroup,'.csv'))
+    writetable(OSBlockMeanTable,strcat(groupAnalysisDir,'OS_GroupMean_',currentGroup,'.csv'))
+    writetable(OSBlockStdTable,strcat(groupAnalysisDir,'OS_StdMean_',currentGroup,'.csv'))
     
     % show progress as go along
     fprintf('\n group %s complete',currentGroup )

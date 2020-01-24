@@ -1,25 +1,42 @@
+%% Begin Wrapper script
 
-
-
-%this could be a variable input
-subjDataDir = '/N/u/dnbulloc/Carbonate/OCT_Data/Data';
-
+%% generate primary data derivative
+%directory containing data from device?
+rawSubjDataDir = '/N/u/dnbulloc/Carbonate/OCT_Data/Data';
+%directory to output layer-parsed output
 targetOutputDir='/N/u/dnbulloc/Carbonate/OCT_Data/PrimaryData';
-
-analysisMeanDir='/N/u/dnbulloc/Carbonate/OCT_Data/subjectLayerAnalyses';
-
-
-
-centroidCSVPath='/N/u/dnbulloc/Carbonate/OCT_Data/Location/Location.csv';
-
 %these are the layers we want to analyse with the associated names
-%THESE WOULD LIKELY BE VARIABLE INPUTS
+%These are specified by user
 layerIndexSequences={1:7,1:4,5,6};
-%THESE WOULD EITHER BE VARIABLE INPUTS OR TAKEN IN FROM TABLE
+%Is there a better way to obtanin thse?
+%these are the given layer combination names
 analysesNames={'TT','NL','ONL','PROS'};
 
+createCSVsumOutputFiles(rawSubjDataDir,targetOutputDir,layerIndexSequences,analysesNames)
 
-createCSVsumOutputFiles(subjDataDir,targetOutputDir,layerIndexSequences,analysesNames)
+%% create iterative, subject level means
+%path to output subject+layer level analysis to
+analysisMeanDir='/N/u/dnbulloc/Carbonate/OCT_Data/subjectLayerAnalyses';
+%path to file specifying centroid data
+centroidCSVPath='/N/u/dnbulloc/Carbonate/OCT_Data/Location/Location.csv';
+%visual field width in degrees, i.e. diameter of visual field measured
+%currently specified by user, but maybe there is a better way to infer this
+%from the centroid csv data?
+visFieldDiam=20;
+%specify how you would like the iterative mean computed, either as either "rings" or "full".  This indicates whether the
+%  mean of the visual field should be computed as hollow, cocentric, 1mm
+%  rings (think dart board) or as a full circle/elipsoid.
+meanShape='rings';
 
+analyzeOCTDataWrapper(targetOutputDir,analysisMeanDir,centroidCSVPath,meanShape)
 
-analyzeOCTDataWrapper(targetOutputDir,analysisMeanDir,centroidCSVPath,20, 'full')
+%% perform group level analysis
+
+%specify directory containing group membership files
+groupKeyDir='/N/u/dnbulloc/Carbonate/OCT_Data/Groups';
+%specify desired directory for output of group analysis
+groupAnalysisDir='/N/u/dnbulloc/Carbonate/OCT_Data/GroupAnalysis/';
+
+OCTGroupAnalysisWrapper(inputDir,groupKeyDir,outputDir)
+
+%END OF PIPELINE CODE

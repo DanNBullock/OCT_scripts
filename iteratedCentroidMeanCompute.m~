@@ -91,9 +91,8 @@ for iAngles=1:visFieldRadiusLimit
         %pad the array with the info obtained
         expandPreviousMask= padarray(previousElipsoidMask,[padVals]);
         
-        elipsoidMask=elipsoidMask(~expandPreviousMask)
-        
-        
+        %hollow out the mask
+        elipsoidMask=and(elipsoidMask,~expandPreviousMask);
         
         else
             %dont do anything different, there's no inner range of values
@@ -104,17 +103,16 @@ for iAngles=1:visFieldRadiusLimit
         %shape.
     end
         
-
-    
     %Technically at this point we no longer care where they are, just that
     %they meet the criteria for us being interested in them.  Thus create a
     %new data object from <currentAnalysisData> only containing the values
     %of interest, which also happens to correspond to the size of <elipsoidMask>
-    dataSubset=currentAnalysisData(yRange,xRange);
+     dataSubset=currentAnalysisData(yRange,xRange);
     
     
     %from this subset, computes the mean and standard deviation
     maskedMeans(iAngles)=mean(dataSubset(elipsoidMask));
     maskedStds(iAngles)=std(dataSubset(elipsoidMask));
 end
+
 end
