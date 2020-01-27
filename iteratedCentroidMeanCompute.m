@@ -49,8 +49,20 @@ elseif isnumeric(subjectLayersCSVpath)
     currentAnalysisData=subjectLayersCSVpath;
 end
 
+%quick implementation of thresholding
+if ~isempty(threshFloor)
+    currentAnalysisData(currentAnalysisData<threshFloor)=NaN;
+else
+    %do nothing, no thresholding
+end
+
 %extract array size of data
 currentDataSize=size(currentAnalysisData);
+
+
+%% implement img resize here
+%imresize
+
 
 %note the flipped weirdness of 2 corresponding to x and 1 corresponding to
 %y
@@ -111,8 +123,8 @@ for iAngles=1:visFieldRadiusLimit
     
     
     %from this subset, computes the mean and standard deviation
-    maskedMeans(iAngles)=mean(dataSubset(elipsoidMask));
-    maskedStds(iAngles)=std(dataSubset(elipsoidMask));
+    maskedMeans(iAngles)=nanmean(dataSubset(elipsoidMask));
+    maskedStds(iAngles)=nanstd(dataSubset(elipsoidMask));
 end
 
 end

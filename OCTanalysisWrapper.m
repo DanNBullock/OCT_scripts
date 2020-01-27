@@ -26,9 +26,17 @@ visFieldDiam=20;
 %specify how you would like the iterative mean computed, either as either "rings" or "full".  This indicates whether the
 %  mean of the visual field should be computed as hollow, cocentric, 1mm
 %  rings (think dart board) or as a full circle/elipsoid.
+%
+%  smoothParam:  smoothing kernel to apply to <subjectLayersCSVpath> data.
+%  If variable is empty, no smoothing is applied.
+%
+%  threshFloor:  floor threshold value for data in <subjectLayersCSVpath>
+%  data.  Values below floor are set to NaN and not computed in averages.
+theshFloor=20
+
 meanShape='rings';
 
-analyzeOCTDataWrapper(targetOutputDir,analysisMeanDir,centroidCSVPath,meanShape)
+analyzeOCTDataWrapper(targetOutputDir,analysisMeanDir,centroidCSVPath,meanShape,[],theshFloor)
 
 %% perform group level analysis
 
