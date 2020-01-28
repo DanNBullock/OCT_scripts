@@ -59,47 +59,48 @@ end
 %extract array size of data
 currentDataSize=size(currentAnalysisData);
 
+%we need to interpolate the new centroid as well
+centerTrue=false(currentDataSize);
+centerTrue(centroidXYVal(2),centroidXYVal(1))=true;
 
-%% implement 
+
+
+largestDimSize=currentDataSize(max(currentDataSize)==currentDataSize);
+%% implement img resize here
+imageSquareForm=imresize(currentAnalysisData,[largestDimSize,largestDimSize]);
+
+%also resize the centerTrue to find the resized centroid
+centerSquareForm=imresize(centerTrue,[largestDimSize,largestDimSize]);
+[centerResizeY,centerResizeX]=find(centerSquareForm);
+%We get multiple returns for centerResizeY, but only one for centerResizeX
+%because that dimension of the data didn't change.  Here we impliment a
+%heuristic for choosing the appropriate Y value.  Given that matlab is a 1
+%indexed system and thus, data in the x indexed spot in in array is mapped
+%to anything corresponding to x:x-1 (but exclusive to x-1).
+centerYIndexResize=ceil(mean(centerResizeY));
+
+%just pick the first centerResizeX because they should all be the same
+resizeXYCentroid=[centerResizeX(1),centerYIndexResize];
 
 %note the flipped weirdness of 2 corresponding to x and 1 corresponding to
 %y
-conversionResizeX=floor(currentDataSize(2)/(visFieldRadiusLimit*2));
-conversionResizeY=floor(currentDataSize(1)/(visFieldRadiusLimit*2));
+degreeWidth=floor(largestDimSize/[visFieldRadiusLimit*2]);
+ringBorders=degreeWidth:degreeWidth:largestDimSize;
 
 for iAngles=1:visFieldRadiusLimit
 
-    %obtains x and y index range for current visual field angle
-    [xRange, yRange] = computeIndexRangeForElipsoidEccDegree(centroidXYVal,[currentDataSize(2),currentDataSize(1) ],visFieldRadiusLimit,iAngles);
-    
-    %create mask of elipsoid using previous values
-    elipsoidMask=elipsoidMaskFromRangeIndexes(xRange,yRange,centroidXYVal,[conversionResizeX,conversionResizeY],iAngles);
+    %compute mask for current degree
+    currentMask=createGaussianMask(largestDimSize,[ringBorders(iAngles)/largestDimSize],resizeXYCentroid);
+   
     
     if strcmp(meanShape,'rings')
         %only need to do this for angles greater than one.
         if iAngles>1
-        
-        %get dimensions of current mask     
-        maskDim=size(elipsoidMask);
-        
-        %recompute range from previous angle
-        [previousXRange, previousYRange] = computeIndexRangeForElipsoidEccDegree(centroidXYVal,[currentDataSize(2),currentDataSize(1) ],visFieldRadiusLimit,iAngles-1);
+       
         
         %reobtain mask from previous angle
-        previousElipsoidMask= elipsoidMaskFromRangeIndexes(previousXRange,previousYRange,centroidXYVal,[conversionResizeX,conversionResizeY],iAngles-1);
+        previousMask= createGaussianMask(largestDimSize,[ringBorders(iAngles-1)/largestDimSize],resizeXYCentroid);
         
-        %compute dimesnions of previous mask
-        prevMaskDim=size(previousElipsoidMask);
-        
-        %find the difference between the dimension sizes.  Should be an
-        %even number for oth values.
-        dimDiff=maskDim-prevMaskDim;
-        
-        %compute padding needed by dividing dimDiff in half
-        padVals=dimDiff/2;
-        
-        %pad the array with the info obtained
-        expandPreviousMask= padarray(previousElipsoidMask,[padVals]);
         
         %hollow out the mask
         elipsoidMask=and(elipsoidMask,~expandPreviousMask);

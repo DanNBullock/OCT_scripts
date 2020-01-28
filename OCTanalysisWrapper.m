@@ -33,10 +33,11 @@ visFieldDiam=20;
 %  threshFloor:  floor threshold value for data in <subjectLayersCSVpath>
 %  data.  Values below floor are set to NaN and not computed in averages.
 theshFloor=20
+gaussKernel=3
 
 meanShape='rings';
 
-analyzeOCTDataWrapper(targetOutputDir,analysisMeanDir,centroidCSVPath,meanShape,[],theshFloor)
+analyzeOCTDataWrapper(targetOutputDir,analysisMeanDir,centroidCSVPath,visFieldDiam,meanShape,gaussKernel,theshFloor)
 
 %% perform group level analysis
 
