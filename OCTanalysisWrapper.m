@@ -37,6 +37,7 @@ gaussKernel=3
 
 meanShape='rings';
 
+
 analyzeOCTDataWrapper(targetOutputDir,analysisMeanDir,centroidCSVPath,visFieldDiam,meanShape,gaussKernel,theshFloor)
 
 %% perform group level analysis

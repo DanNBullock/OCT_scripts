@@ -114,6 +114,7 @@ end %end analyis target path generation iteration
 %remove .csv
 allFileNamesinput=erase(inputFileNames,'.csv');
 
+%Probably need to make this an input to make it more robust
 %delete the layer labels, feed forward variables
 allFileNamesinputNoNL=erase(allFileNamesinput,'_NL');
 allFileNamesinputNoONL=erase(allFileNamesinputNoNL,'_ONL');

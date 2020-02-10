@@ -1,4 +1,4 @@
-function outputMask =createGaussianMask(squareDim,dimProportion,centroidXYIndx)
+function fullPad =createGaussianMask(squareDim,dimProportion,centroidXYIndx)
 
 %  squareDim:  the size of the diameter of the gaussian mask.  Assumes a square frame
 %  of reference.
@@ -9,8 +9,7 @@ function outputMask =createGaussianMask(squareDim,dimProportion,centroidXYIndx)
 %  to the 
 
 %% begin code
-
-
+keyboard
 %create blank mask
 blankMask=zeros(squareDim,squareDim);
 
@@ -18,24 +17,87 @@ blankMask=zeros(squareDim,squareDim);
 %and thus the notion of a centroid is already offbase, because there are an
 %even number of indexes.  How do we choose which index would be the
 %centroid of the source dataArray?
-inputCenter=blankMask;
+%set the centroid to true
+blankMask([centroidXYIndx(1),centroidXYIndx(2)])=true;
+
 
 %REMEMBER TO FLIP THESE
 marginsX=[centroidXYIndx(1)-1,squareDim-centroidXYIndx(1)];
 marginsY=[centroidXYIndx(2)-1,squareDim-centroidXYIndx(2)];
 
 %compute radius, (just arbitraily using floor for now).
-curRadius=floor(dimProportion*squareDim/2);
-
-%set the centroid to true
-blankMask([centroidXYIndx(2),centroidXYIndx(1)])=true;
+curRadius=floor(dimProportion*squareDim);
 
 rawMask=fspecial('disk',curRadius);
 rawMask=rawMask>0;
 
+
+sum(marginsX)
+sum(marginsY)
 padMarginsX=marginsX-curRadius;
 padMarginsY=marginsY-curRadius;
 
-beforePad=padarray(rawMask,[padMarginsY(1),padMarginsX(1)],'pre');
-fullPad=padarray(beforePad,[padMarginsY(2),padMarginsX(2)],'post');
+marginSumX=sum(padMarginsX)+[2*curRadius];
+marginSumY=sum(padMarginsY)+[2*curRadius];
+
+%only one of these can logically be negative
+xNegatives=padMarginsX<0;
+yNegatives=padMarginsY<0;
+
+%complex check and modification of raw mask
+%essentially we are shaving off part of the raw mask, which will then be
+%added back on by the pad operation later, but will add zeros instead.
+%also have to adjust the padMargins after this
+resizeMask=rawMask;
+
+if yNegatives(1)
+    resizeDim=size(resizeMask);
+    padMarginsY(~yNegatives)=padMarginsY(~yNegatives)+padMarginsY(yNegatives);
+    resizeMask(:,1:abs(padMarginsY(1)))=[];
+   
+    
+end
+
+if yNegatives(2)
+    resizeDim=size(resizeMask)
+    %dont trust end, it messes up here 
+        padMarginsY(~yNegatives)=padMarginsY(~yNegatives)+padMarginsY(yNegatives);
+    resizeMask(:,[resizeDim(2)-abs(padMarginsY(2))]:end)=[];
+
+end
+    
+
+if xNegatives(1)
+        padMarginsX(~xNegatives)=padMarginsX(~xNegatives)+padMarginsX(xNegatives);
+    resizeMask(1:abs(padMarginsX(1)),:)=[];
+
+end
+
+if xNegatives(2)
+     padMarginsX(~xNegatives)=padMarginsX(~xNegatives)+padMarginsX(xNegatives);
+        resizeDim=size(resizeMask);
+    resizeMask([resizeDim(1)-abs(padMarginsX(2))]:end,:)=[];
+   
+end
+    
+
+%are the x and y conventions right for this?
+beforePad=padarray(resizeMask,[abs(padMarginsX(1)),abs(padMarginsY(1))],'pre');
+fullPad=padarray(beforePad,[abs(padMarginsX(2)),abs(padMarginsY(2))],'post');
+
+%NOTE THIS RAWMASK IS NOT THE SAME DIMENSION AS THE BLANKMASK AS SUCH WE
+%ARE FACED WITH A PROBLEM:  GIVEN THAT THE DIFFERENCE BETWEEN THE BLANKMASK
+%SIZE AND THE RAWMASK IS *ODD* WE HAVE TO ARBITRARILY SELECT WHICH
+%DIMENSIONS TO PAD (WE CANT PADD ALL OF THEM EQUALLY)
+% rawMaskDimensions=size(rawMask);
+% blankMaskDimensions=size(blankMask);
+% dimMismatch=blankMaskDimensions-rawMaskDimensions;
+% %WE'RE JUST GOING TO ARBITRARILY PAD UNEVENLY using floor and ceil
+% rawMaskResizeX=[floor(dimMismatch(1)/2),ceil(dimMismatch(1)/2)];
+% rawMaskResizeY=[floor(dimMismatch(2)/2),ceil(dimMismatch(2)/2)];
+% 
+% 
+% rawBeforePad=padarray(rawMask,[abs(rawMaskResizeX(1)),abs(rawMaskResizeY(1))],'pre');
+% rawFullPad=padarray(rawBeforePad,[abs(rawMaskResizeX(2)),abs(rawMaskResizeY(2))],'post');
+
 end
