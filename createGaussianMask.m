@@ -1,5 +1,6 @@
 function fullPad =createGaussianMask(squareDim,dimProportion,centroidXYIndx)
-
+%  fullPad =createGaussianMask(squareDim,dimProportion,centroidXYIndx)
+%
 %  squareDim:  the size of the diameter of the gaussian mask.  Assumes a square frame
 %  of reference.
 %

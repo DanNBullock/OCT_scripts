@@ -49,6 +49,12 @@ function analyzeOCTDataWrapper(inputSubjectDir,outputSubjectDir,centroidCSVPath,
 %
 % Adapted from code produced by Dan Bullock and Jasleen Jolley 05 Nov 2019
 % Dan Bullock 22 Jan 2020
+%% Subfunctions
+% 
+% iteratedCentroidMeanCompute.m
+%
+% 
+%
 %% Begin Code
 % initialize variables and perform checks
 
@@ -78,6 +84,7 @@ end
 
 if isempty(retinaMeanToggle)
     fprintf('\n retinaMeanToggle not set, computing means as hollow, cocentric, 1mm rings')
+    retinaMeanToggle='rings';
 else
     %do nothing
 end

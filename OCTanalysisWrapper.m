@@ -1,4 +1,18 @@
 %% Begin Wrapper script
+%
+%  USER NOTE:  Change the directory paths to the paths that are appropriate
+%  for your local setup and then run this script to generate group level
+%  analysis.
+%
+%  See https://github.com/DanNBullock/OCT_scripts/blob/master/readme.md for
+%  more details
+%
+%% Subfunctions
+%
+% createCSVsumOutputFiles.m
+% analyzeOCTDataWrapper.m
+% OCTGroupAnalysisWrapper.m
+%
 
 %% generate primary data derivative
 %directory containing data from device?

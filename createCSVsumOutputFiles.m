@@ -31,6 +31,11 @@ function createCSVsumOutputFiles(subjDataDir,targetOutputDir,layerIndexSequences
 %
 % Adapted from code produced by Dan Bullock and Jasleen Jolley 05 Nov 2019
 % Extensive rewrite/functionalization by Dan Bullock 22 Jan 2020
+%
+%% Subfunctions
+%
+%  parseCsvExport.m
+%
 %%  Begin Code
 % initialize relevant variables and perform checks
 

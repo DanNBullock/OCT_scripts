@@ -27,6 +27,11 @@ function OCTGroupAnalysisWrapper(inputDir,groupKeyDir,outputDir)
 %
 % Adapted from code produced by Dan Bullock and Jasleen Jolley 05 Nov 2019
 % Extensive rewrite/functionalization by Dan Bullock 22 Jan 2020
+%% Subfunctions
+% 
+% parseInputGroupKey.m
+%
+% 
 %% Begin Code
 %  set variables and perform checks
 
