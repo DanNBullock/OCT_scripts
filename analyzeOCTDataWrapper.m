@@ -161,7 +161,7 @@ for iAnalysis=1:length(uniqueSubjEyeNames)  %loop over input files
     
     %quick adaptation from previous version of code.  Results in
     %redundancies later on, but efficient for now.
-    currentCenterName=strcat(uniqueSubjEyeNames{iAnalysis},'_T');
+    currentCenterName=strcat(uniqueSubjEyeNames(iAnalysis,:),'_T');
     
     %finding the underscores in the name, just as before
     underscoreIndexes=strfind(currentCenterName,'_');
