@@ -121,15 +121,29 @@ end %end analyis target path generation iteration
 %remove .csv
 allFileNamesinput=erase(inputFileNames,'.csv');
 
-%Probably need to make this an input to make it more robust
-%delete the layer labels, feed forward variables
-allFileNamesinputNoNL=erase(allFileNamesinput,'_NL');
-allFileNamesinputNoONL=erase(allFileNamesinputNoNL,'_ONL');
-allFileNamesinputNoPROS=erase(allFileNamesinputNoONL,'_PROS');
-allFileNamesinputNoTT=erase(allFileNamesinputNoPROS,'_TT');
+namePartsStorage=cell(length(allFileNamesinput),3);
+for iEntries=1:length(allFileNamesinput)
+    currentSplit = split(allFileNamesinput{iEntries},'_');
+    %awkward, but quick fix
+    namePartsStorage{iEntries,1}=currentSplit{1};
+    namePartsStorage{iEntries,2}=currentSplit{2};
+    namePartsStorage{iEntries,3}=currentSplit{3};
+end
 
-%again, overengineering for input agnostic purposes
-uniqueSubjEyeNames=unique(allFileNamesinputNoTT);
+%three vectors with unique entries
+uniqueSubjs=unique({namePartsStorage{:,1}});
+uniqueEyes=unique({namePartsStorage{:,2}});
+uniqueAnalyses=unique({namePartsStorage{:,3}});
+
+%quick iterator
+uniqueSubjEyeNames=[];
+for iuniqueSubjs=1:length(uniqueSubjs)
+    %maybe someone has three eyes?
+    for iuniqueEyes=1:length(uniqueEyes)
+    currentFileStem=strcat(uniqueSubjs{iuniqueSubjs},'_',uniqueEyes{iuniqueEyes});
+    uniqueSubjEyeNames=vertcat(uniqueSubjEyeNames,currentFileStem) ;   
+    end
+end
 
 %% Begin analysis computations
 
