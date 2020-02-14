@@ -15,7 +15,7 @@
 
 This code is written in Matlab.  It makes use of the imresize function and thus requires Matlab&#39;s image processing toolkit.
 
-The primary wrapper function is OCT\_MRI\_Script.m which goes from individual raw data all the way to subject-level analysis.   Thus, once the local github repository has been added to Matlab&#39;s path, running the contents of OCT\_MRI\_Script.m should be sufficient to perform the full analysis.
+The primary wrapper function is OCTanalysisWrapper.m which goes from individual raw data all the way to subject-level analysis.   Thus, once the local github repository has been added to Matlab&#39;s path, running the contents of OCTanalysisWrapper.m should be sufficient to perform the full analysis.
 
 **Code details**
 
