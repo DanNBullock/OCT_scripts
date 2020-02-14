@@ -61,6 +61,6 @@ groupKeyDir='/N/u/dnbulloc/Carbonate/OCT_Data/Groups';
 %specify desired directory for output of group analysis
 groupAnalysisDir='/N/u/dnbulloc/Carbonate/OCT_Data/GroupAnalysis/';
 
-OCTGroupAnalysisWrapper(inputDir,groupKeyDir,outputDir)
+OCTGroupAnalysisWrapper(analysisMeanDir,groupKeyDir,groupAnalysisDir)
 
 %END OF PIPELINE CODE
