@@ -1,4 +1,4 @@
-function [subjectID, indexVec, groupNames]=parseInputGroupKey(pathToKey)
+function [subjectID, indexVec, groupNames]=parseInputGroupKey_v1(pathToKey)
 %parseInputGroupKey(pathToKey)
 %
 %This function is an attempt at providing a robust parsing function for
@@ -29,21 +29,10 @@ groupNames=[];
 if isfile(pathToKey)  %single keyfile case
     [~,~,ext] = fileparts(pathToKey)
     if strcmp(ext,'xlsx')  %ignore xls case for now
-          [~,holdText]=xlsread(pathToKey);
-          xlSize=size(holdText)
+          [~,holdText]=xlsread(pathToKey)
           %finish making this robust at some later point
-          for iColumns=1:xlSize(2)%dont know why there would be more than 2
-              %convert it to a number, if it is empty it is a string, and
-              %thus probably a column header
-              convertedHeader(iColumns)=str2num(holdText{1,iColumns});
-          end
-          
-          %cases: 1 column or 2
-          
-          if 
-          
-          
-    elseif strcmp(ext,'csv')  %csv case
+          keyboard
+    elseif strcmp(ext,'xlsx')  %csv case
         tableContents=readtable(pathToKey)
         %finish making this robust at some later point
         keyboard
@@ -80,4 +69,3 @@ elseif isfolder(pathToKey)
 end
 
 end
-        

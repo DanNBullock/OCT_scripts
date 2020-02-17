@@ -66,7 +66,7 @@ for isecondaryOutputFiles=1:length(inputDirFileNames)
 end
 
 %parse the group key
-[subjectIDs, indexVec, groupNames]=parseInputGroupKey(groupKeyDir);
+[subjectIDs, indexVec, groupNames]=parseInputGroupKey_v1(groupKeyDir);
 
 % using the group directory to know which subjects belong in which group
 %iterates across <fileNames>  Which I believe is just several excel files with file-group membership indications

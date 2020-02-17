@@ -21,40 +21,12 @@ function computeGroupMAIAmeans(subjectDir,keyFile,meanMethod,outputDir)
 %  Dan Bullock  15 Feb 2020 
 %%  Begin Code
 
-%extract directory contents
-inputDirContents=dir(subjectDir);
+[MAIAdirTable] = MAIAdirArray(subjectDir);
 
-%extract the files of interest
-%  GET THIS INFO FROM Jasleen
-allFileNamesinput=''
+[indexMeanTable, indexStdTable]=computeMAIAgroupMeansIndexes(MAIAdirTable,keyFile);
 
-namePartsStorage=cell(length(allFileNamesinput),2);
 
-for iEntries=1:length(allFileNamesinput)
-    currentSplit = split(allFileNamesinput{iEntries},'_');
-    %awkward, but quick fix
-    namePartsStorage{iEntries,1}=currentSplit{1};
-    namePartsStorage{iEntries,2}=currentSplit{2};
-end
 
-%three vectors with unique entries to extract subject and eye info for the
-%file paths
-uniqueSubjs=unique({namePartsStorage{:,1}});
-uniqueEyes=unique({namePartsStorage{:,2}});
 
-allSubjectsMeanVec=[];
-for iDataFiles=1:length(allFileNamesinput)
-[currMeanVec]=MAIAsubjectMeanGen(subjectFilePath,meanMethod);
-
-%potentially a problem if you run it manually but fine if you run it as a function
-if isempty(allSubjectsMeanVec)
-    allSubjectsMeanVec=currMeanVec;
-else
-    allSubjectsMeanVec=vertcat(allSubjectsMeanVec,currMeanVec);
-end
-
-end
-
-% now compute the means here
 
 end
