@@ -46,7 +46,7 @@ csv file containing a list of the 3 digit identifiers for the participants in th
 This code is written in Matlab.  It makes use of the _imresize_function and thus requires Matlab&#39;s image processing toolkit.
 
 The primary wrapper function is _OCTanalysisWrapper __.m_ which goes from individual raw data all the way to group-level analysis.   Thus, once the local github repository has been added to Matlab&#39;s path, running the contents of _OCTanalysisWrapper__.m_(after setting paths appropriately) should be sufficient to perform the full analysis.
-
+<br/> <br/>
 Ensure the correct pathways are set for (see below for further details):
 
 rawSubjDataDir (input CSV files)
@@ -60,13 +60,13 @@ centroidCSVPath (Location file)
 groupKeyDir (folder that specifies groups)
 
 groupAnalysisDir (final output)
-
+<br/><br/>
 In addition, customise the following to your layers of interest:
 
 layerIndexSequences={1:7,1:4,5,6,5:6};
 
 analysesNames={&#39;TT&#39;,&#39;IR&#39;,&#39;ONL&#39;,&#39;PROS&#39;,&#39;PC&#39;};
-
+<br/><br/>
 This is based on the output from Orion:
 
 The data is arranged as all\_layers(width,slices,num\_layers)
@@ -86,7 +86,7 @@ The data is arranged as all\_layers(width,slices,num\_layers)
 7: Reading layer: RPE to BRUCHS
 
 Therefore, we read 8 layers when no additional layers are added.
-
+<br/>
 **Code details (OCT)**
 
 The wrapper,_OCTanalysisWrapper__.m_ , directly calls the following functions:
