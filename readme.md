@@ -33,12 +33,6 @@ Create a file named &#39;Location.csv&#39; to identify the foveal centre. This m
 Size X pixels and X mm are determined by the OCT scan parameters and may be identical across all images. On the OCT software, such as Heidelberg, identify the foveal centre in the original image. Record the slice this is found in. The final column contains precise X location of the foveal centre. The pixel position (position) is then calculated by (SizeXpixel / SizeXmm) \* Position on HEE.
 
 If you have multiple groups in your dataset set up a group directory. For each group create a
-#
-[ANNOTATION:
-
-BY &#39;Daniel Bullock&#39;
-ON &#39;2020-02-17T17:23:13&#39;
-NOTE: &#39;It would indeed be easier to use a CSV, but I believe that you originally sent me excel files.  I&#39;ll need to do a bit more retinkering in order to get it to accept CSVs probably.&#39;]
 csv file containing a list of the 3 digit identifiers for the participants in that group.
 
 **Running this code (OCT)**
