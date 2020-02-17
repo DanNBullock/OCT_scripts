@@ -37,9 +37,9 @@ csv file containing a list of the 3 digit identifiers for the participants in th
 
 **Running this code (OCT)**
 
-This code is written in Matlab.  It makes use of the _imresize_function and thus requires Matlab&#39;s image processing toolkit.
+This code is written in Matlab.  It makes use of the _imresize_ function and thus requires Matlab&#39;s image processing toolkit.
 
-The primary wrapper function is _OCTanalysisWrapper __.m_ which goes from individual raw data all the way to group-level analysis.   Thus, once the local github repository has been added to Matlab&#39;s path, running the contents of _OCTanalysisWrapper__.m_(after setting paths appropriately) should be sufficient to perform the full analysis.
+The primary wrapper function is _OCTanalysisWrapper __.m_ which goes from individual raw data all the way to group-level analysis.   Thus, once the local github repository has been added to Matlab&#39;s path, running the contents of _OCTanalysisWrapper__.m_ (after setting paths appropriately) should be sufficient to perform the full analysis.
 <br/> <br/><br/>
 Ensure the correct pathways are set for (see below for further details):
 
@@ -128,7 +128,7 @@ The rest of the variables are parameters which the user may modify in order to i
 
 This code is written in Matlab.  It makes use of no specialized matlab toolkits
 
-The primary wrapper function is _MAIAwrapper __.m_ which goes from individual raw data all the way to subject-level analysis.   Thus, once the local github repository has been added to Matlab&#39;s path, running the contents of _MAIAwrapper__.m_(after setting paths appropriately) should be sufficient to perform the full analysis.
+The primary wrapper function is _MAIAwrapper __.m_ which goes from individual raw data all the way to subject-level analysis.   Thus, once the local github repository has been added to Matlab&#39;s path, running the contents of _MAIAwrapper__.m_ (after setting paths appropriately) should be sufficient to perform the full analysis.
 
 Ensure the correct pathways are set for (see below for further details):
 
