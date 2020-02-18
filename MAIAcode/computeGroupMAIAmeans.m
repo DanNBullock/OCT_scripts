@@ -43,7 +43,7 @@ outputFilePaths=fullfile(outputDir,outputFileNames);
 
 %write the tables
 writetable(indexMeanTable,outputFilePaths{1})
-writetable(stdDegreesTable,outputFilePaths{2})
+writetable(indexStdTable,outputFilePaths{2})
 writetable(meanDegreesTable,outputFilePaths{3})
 writetable(stdDegreesTable,outputFilePaths{4})
 
