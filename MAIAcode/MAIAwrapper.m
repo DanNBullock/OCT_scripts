@@ -11,7 +11,7 @@
 %% Subfunctions
 %
 % computeGroupMAIAmeans.m
-% (other subfunctions used within this one
+% (other subfunctions used within this one)
 %
 %% Begin setup
 %  Here we set the variables that will be used in the subsequent pipeline
@@ -31,10 +31,18 @@ keyFile='/N/u/dnbulloc/Carbonate/OCT_Data/Groups';
 %  meanMethod: either "rings" or "full".  This indicates whether the
 %  mean of the visual field should be computed as hollow, cocentric, 1mm
 %  rings (think dart board) or as a full circle/elipsoid
-meanMethod='rings';
+%  NOTE:  No longer used
 %
 %  outputDir:  directory in which to save the output group analysis
 outputDir='/N/u/dnbulloc/Carbonate/OCT_Data/MAIAoutput';
 %
-computeGroupMAIAmeans(subjectDir,keyFile,meanMethod,outputDir);
+%  sectionIndexes:  A cell array with integer sequences indicating which
+%  indexes (from the MAIA reading) that you would like to have iteratively
+%  averaged.  Must be a cell array in order to handle sequences of
+%  different lenths.  EACH set sequence (i.e. a set of indexes to average
+%  over) should be either by indicating a range (i.e 2:5) or enumeration
+%  (i.e. 2,3,4,5) and should be terminated by a ;
+sectionIndexes={2:5;6:17;18:37};
+%  
+computeGroupMAIAmeans(subjectDir,keyFile,sectionIndexes,outputDir);
 % end of wrapper

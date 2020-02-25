@@ -1,4 +1,4 @@
-function [meanDegreesTable, stdDegreesTable ]=computeMAIAgroupMeansDegrees(indexMeanTable, indexStdTable,meanMethod)
+function [meanDegreesTable, stdDegreesTable ]=computeMAIAgroupMeansDegrees(indexMeanTable, indexStdTable,sectionIndexes)
 %  [meanDegreesTable, stdDegreesTable ]=computeMAIAgroupMeansDegrees(indexMeanTable, indexStdTable,meanMethod)
 %
 %  This function takes in the multi group index-wise mean tables produced
@@ -16,6 +16,13 @@ function [meanDegreesTable, stdDegreesTable ]=computeMAIAgroupMeansDegrees(index
 %  meanMethod: either "rings" or "full".  This indicates whether the
 %  mean of the visual field should be computed as hollow, cocentric, 1mm
 %  rings (think dart board) or as a full circle/elipsoid
+%  NOTE: this input has been depricated as the user now inputs directly the
+%  indexes to be computed across
+%
+%  sectionIndexes:  A cell array with integer sequences indicating which
+%  indexes (from the MAIA reading) that you would like to have iteratively
+%  averaged.  Must be a cell array in order to handle sequences of
+%  different lenths.
 %
 %  OUTPUTS
 %
@@ -41,10 +48,13 @@ iIter=0;
 
 %compute the number of indexes needed for the current data, but remember
 %that you'll be ignoring column 1
+% now a variable
 while totalPoints(end)<length(nodeColumnNames)
     totalPoints(iIter+1)=4*iIter^2 + 1;
     iIter=iIter+1;
 end
+
+
 
 %delete the last one, because we necessarily go over
 totalPoints(end)=[];
@@ -63,12 +73,12 @@ dataSize=size(meanDataArray);
 
 %create blank output array, twice as long because now we include standard
 %deviation in the table
-outMeanArrayData=zeros(dataSize(1),length(totalPoints))*2;
+outMeanArrayData=zeros(dataSize(1),length(sectionIndexes))*2;
 outStdArrayData=outMeanArrayData;
 
 for iMeans=1:dataSize(1)
     
-    for iRings=1:length(totalPoints)
+    for iRings=1:length(sectionIndexes)
         
         %if it is 1 set it to the current index, otherwise, compute it
         if iRings==1
@@ -78,14 +88,19 @@ for iMeans=1:dataSize(1)
             currStdStd=0;
         else
             %get the index range in accordance with the input mean method
-            if strcmp(meanMethod,'rings')
-            %derive current range of indexes
-            currRange=[[totalPoints(iRings-1)+1]:[totalPoints(iRings)]];
-            elseif strcmp(meanMethod,'full')
-               currRange=[1:[totalPoints(iRings)]]; 
-            else
-                error('mean compute method not recognized')
-            end
+%             if strcmp(meanMethod,'rings')
+%             %derive current range of indexes
+%             %old method
+%             currRange=[[totalPoints(iRings-1)+1]:[totalPoints(iRings)]];
+%             currRange=totalPoints{iRings}
+%             
+%             elseif strcmp(meanMethod,'full')
+%                currRange=[1:[totalPoints(iRings)]]; 
+%             else
+%                 error('mean compute method not recognized')
+%             end
+            currRange=sectionIndexes{iRings};
+
                 
             %begin computing statistics
             currMeanMean=mean(meanDataArray(iMeans,currRange));
@@ -100,15 +115,15 @@ for iMeans=1:dataSize(1)
         %enter in current mean
         outMeanArrayData(iMeans,iRings)=currMeanMean;
         %enter in current std
-        outMeanArrayData(iMeans,iRings+5)=currMeanStd;
+        outMeanArrayData(iMeans,iRings+length(sectionIndexes))=currMeanStd;
          %enter in current mean for input std tabler
         outStdArrayData(iMeans,iRings)=currStdMean;
         %enter in current std for input std tabler
-        outStdArrayData(iMeans,iRings+5)=currStdStd;
+        outStdArrayData(iMeans,iRings+length(sectionIndexes))=currStdStd;
     end
     
     %setcolumn headers, just the ring name
-    ringLabelsStrings= strcat('ring',cellfun(@num2str,num2cell(1:5),'UniformOutput',false));
+    ringLabelsStrings= strcat('ring',cellfun(@num2str,num2cell(1:length(sectionIndexes)),'UniformOutput',false));
     columnHeadersMean=strcat(ringLabelsStrings,'mean');
     columnHeadersStd=strcat(ringLabelsStrings,'std');
     

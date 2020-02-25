@@ -1,4 +1,4 @@
-function computeGroupMAIAmeans(subjectDir,keyFile,meanMethod,outputDir)
+function computeGroupMAIAmeans(subjectDir,keyFile,sectionIndexes,outputDir)
 
 %  INPUTS
 %
@@ -12,9 +12,16 @@ function computeGroupMAIAmeans(subjectDir,keyFile,meanMethod,outputDir)
 %  this, and the function that parses this ought to be able to contend with
 %  this.  Eventually.  Not currently though.
 %
+%  sectionIndexes:  A cell array with integer sequences indicating which
+%  indexes (from the MAIA reading) that you would like to have iteratively
+%  averaged.  Must be a cell array in order to handle sequences of
+%  different lenths.
+%
 %  meanMethod: either "rings" or "full".  This indicates whether the
 %  mean of the visual field should be computed as hollow, cocentric, 1mm
 %  rings (think dart board) or as a full circle/elipsoid
+%  NOTE:  this input is now depricated and no longer used as the user
+%  directly inputs these values in sectionIndexes
 %
 %  outputDir:  directory in which to save the output group analysis
 %
@@ -33,7 +40,7 @@ end
 [indexMeanTable, indexStdTable]=computeMAIAgroupMeansIndexes(MAIAdirTable,keyFile);
 
 %compute the iterative means for each group
-[meanDegreesTable, stdDegreesTable ]=computeMAIAgroupMeansDegrees(indexMeanTable, indexStdTable,meanMethod);
+[meanDegreesTable, stdDegreesTable ]=computeMAIAgroupMeansDegrees(indexMeanTable, indexStdTable,sectionIndexes);
 
 %now we save the tables
 outputFileNames={'indexMeanTable.csv','indexStdTable.csv','meanDegreesTable.csv','stdDegreesTable.csv'};
