@@ -5,20 +5,20 @@
 %  from a group directory structure to a subject wise directory structure
 %
 %  See https://github.com/DanNBullock/OCT_scripts/blob/master/readme.md for
-%  more details for teh overall pipeline.
+%  more details for the overall pipeline.
 %
 
 
 %% generate primary data derivative
-%directory containing data from device?
+% directory containing raw data from Voxelron device
 rawSubjDataDir = '/N/u/dnbulloc/Carbonate/OCT_Data/Data';
-%directory to output layer-parsed output
+% directory to output OD and OS eye data for this subject, along with
+% centroid data from next inut
 targetOutputDir='/N/u/dnbulloc/Carbonate/OCT_Data/PrimaryData';
-%path to file specifying centroid data
+% path to file specifying centroid data for this group
 centroidCSVPath='/N/u/dnbulloc/Carbonate/OCT_Data/Location/Location.csv';
 
+%perform conversion
 createRawOCTSubjectDirectoryStructure(rawSubjDataDir,targetOutputDir, centroidCSVPath);
 
-
 %END OF Conversion CODE
-
