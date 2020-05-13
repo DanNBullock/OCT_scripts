@@ -116,11 +116,12 @@ for iSubjects=1:length(totalSubjects)
     end  %end sequence loop
 end  %end subject eye merge loop
     
-    
+%convert it to a table
+mergedEyesTableOut=cell2table(mergedEyesTable,'VariableNames',meansTable.Properties.VariableNames);
 
 %% save output
 
 %write the tables
 writetable(meansTable,fullfile(outputDir,'meansTable.csv'))
-writetable(mergedEyesTable,fullfile(outputDir,'mergedEyeMeansTable.csv'))
+writetable(mergedEyesTableOut,fullfile(outputDir,'mergedEyeMeansTable.csv'))
 end
