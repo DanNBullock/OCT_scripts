@@ -1,12 +1,11 @@
-function createOCTSubjectDirectoryStructure(subjDataDir,targetOutputDir, centroidCSVPath, layerIndexSequences,analysesNames)
-%createOCTSubjectDirectoryStructure(subjDataDir,targetOutputDir, centroidCSVPath, layerIndexSequences,analysesNames)
+function createCSVsumOutputFiles(subjDataDir,targetOutputDir, layerIndexSequences,analysesNames)
+%createCSVsumOutputFiles(subjDataDir,targetOutputDir,layerIndexSequences,analysesNames)
 %
-%This is a function that is used to create a subject level directory
-%structure for OCT data analysis.  Previously, centroid data was kept in a
-%separate, group level file (input here as centroidCSVPath).  However, for
-%cloud/parallel processing purposes group level files liek this are not
-%ideal.  As such, this function creates a directory structure with
-%preprocessed data.
+%This is a semi-generalized function which creates the desired output csv
+%files for all subjects/eyes in an input directory, <subjDataDir>.  Presumes input CSV
+%files are in the format necessary for parseCsvExport. Outputs a csv which
+%sums across each layer set specified in <layerIndexSequences>, named in
+%accordance with input to <analysesNames>.  Saved to <targetOutputDir>.
 %
 %  INPUTS:
 %
@@ -18,9 +17,6 @@ function createOCTSubjectDirectoryStructure(subjDataDir,targetOutputDir, centroi
 %  targetOutputDir:  the directory that the output of this function should
 %  be saved to.  If not specified creates an output directory
 %  ('primaryOutput') within the <subjDataDir> directory
-%
-%  centroidCSVPath:  path to the CSV file containing the data indicating
-%  the centroid? of the eye
 %
 % layerIndexSequences: a cell array of integer sequences corresponding to
 % the layers reprsented in the subjects' input csv data arrays.  Measures
@@ -35,7 +31,6 @@ function createOCTSubjectDirectoryStructure(subjDataDir,targetOutputDir, centroi
 %
 % Adapted from code produced by Dan Bullock and Jasleen Jolley 05 Nov 2019
 % Extensive rewrite/functionalization by Dan Bullock 22 Jan 2020
-% Function readapted by Dan Bullock May 12 2020 for directory creation
 %
 %% Subfunctions
 %
@@ -68,12 +63,6 @@ end
 
 %% Begin file parsing and output creation
 
-%load the excel file to obtain the centroid data
-centroidTable =readtable(centroidCSVPath);
-
-%here we obtain the entire column under the table heading <Filename>, returns a cell string vector
-centerNames=centroidTable.Filename;
-
 %extract the contents of the input <subjDataDir>
 subjectDirContents = dir(subjDataDir);
 
@@ -102,38 +91,17 @@ csvpaths = fullfile(subjDataDir,fileNames);
 % to new CSVs for each layer we are interested in.
 
 
-for iInputFiles = 1:length(csvpaths) %Begins by iterating over subjects
-    
-    %make an output directory for this subject
-    currentSubjDirectory=fullfile(targetOutputDir,subjectID{iInputFiles});
-    if ~isfolder(currentSubjDirectory)
-    mkdir(currentSubjDirectory);
-    else
-        %do nothing
-    end
-    
-    %establish current csv file path
-    currentCsvPath=csvpaths{iInputFiles};
-    %pull out the file name so we can compare it to the Location.csv
-    [~,currFilename,~]=fileparts(currentCsvPath);
-    
-    %find the relevant index, assume nothing about sequence
-    locationFileRowIndex=find(strcmp(currFilename,centerNames));
-    
-    % set X and Y of the centroid
-    % be careful though because there appears to be a mismatch between our intuitions about x and y and the standard indexing practices of matlab
-    currentXVal=centroidTable.position(locationFileRowIndex);
-    currentYVal=centroidTable.slice(locationFileRowIndex); 
+for isubjects = 1:length(csvpaths) %Begins by iterating over subjects
     
     % uses proprietary parseCSVExport to get csv data
-    curcsv = parseCsvExport(currentCsvPath);
+    curcsv = parseCsvExport(csvpaths{isubjects});
     
     for iAnalyses=1:length(analysesNames) %iterates over analyses
         currentLayers=layerIndexSequences{iAnalyses};
         %uses <currentLayers> to index across the relevant layers of <curcsv>, notably in the third dimension.  Subsequently sums those layers. 
         outputArray = [sum(curcsv(:,:,currentLayers),3)]';
         %here we generate the name for this specific analysis/synthesis output, using <subjectID>, <eye>, and <analysesNames>
-        outPutName=strcat(eye{iInputFiles},'_',analysesNames{iAnalyses});
+        outPutName=strcat(subjectID{isubjects},'_',eye{isubjects},'_',analysesNames{iAnalyses});
         %append .csv
         outputCSVname=strcat(outPutName,'.csv');
         %generate filepath name for output
@@ -141,18 +109,13 @@ for iInputFiles = 1:length(csvpaths) %Begins by iterating over subjects
         %THIS IS BECAUSE WE WERE PREVIOUSLY CATTING A '\', WHICH WAS
         %SPECIFIC TO WINDOWS ENVIRONMENTS.  IT IS POSSIBLE THAT \n MAY
         %CAUSE PROBLEMS FOR THIS SAME REASON
-        outFileName=fullfile(currentSubjDirectory,outputCSVname);
+        outFileName=fullfile(targetOutputDir,outputCSVname);
         %here we write the csv out.
         csvwrite(outFileName,outputArray);
         %bit of a terminal report here
-        fprintf('\n Cross layer sum csv creation for layer(s) %s for %s complete for %s', num2str(layerIndexSequences{iAnalyses}), strcat(subjectID{iInputFiles},'_',eye{iInputFiles}), analysesNames{iAnalyses})
+        fprintf('\n Cross layer sum csv creation for layer(s) %s for %s complete for %s', num2str(layerIndexSequences{iAnalyses}), strcat(subjectID{isubjects},'_',eye{isubjects}), analysesNames{iAnalyses})
    
     end %end of <analysesNames> iteration.
-    %create simple file for centroid coordinate storage.
-    eyeCentroidFileName=strcat(currentSubjDirectory,'/',eye{iInputFiles},'centroid.csv');
-    writematrix([currentXVal currentYVal],eyeCentroidFileName);
-    
-    
     %creates space between iterations outputs
     fprintf('\n')
 end  %end of <subjDataDir> CSV file iteration.

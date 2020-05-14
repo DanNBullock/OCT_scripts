@@ -59,7 +59,7 @@ for iGroups=1:length(groupNames)
     %initialize vector for current group
     currentGroupMeanArray=zeros(length(curUniqueEyeIDs),length(nodeNames));
     currentGroupStdArray=currentGroupMeanArray;
-    
+    keyboard
     %loop across nodes
     for iNodes=1:length(nodeNames)
         %extract the current column

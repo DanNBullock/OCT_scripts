@@ -46,6 +46,6 @@ sectionIndexes={2:5;6:17;18:37};
 %  
 computeGroupMAIAmeans(subjectDir,keyFile,sectionIndexes,outputDir);
 %or for an individual level output
-%computeSubjectMAIAmeansFromDir(subjectDir,sectionIndexes,keyfile,outputDir)
+%computeSubjectMAIAmeansFromDir(subjectDir,sectionIndexes,keyFile,outputDir)
 
 % end of wrapper

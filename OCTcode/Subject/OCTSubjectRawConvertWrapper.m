@@ -18,6 +18,10 @@ targetOutputDir='/N/u/dnbulloc/Carbonate/OCT_Data/PrimaryData';
 % path to file specifying centroid data for this group
 centroidCSVPath='/N/u/dnbulloc/Carbonate/OCT_Data/Location/Location.csv';
 
+if ~isfolder(targetOutputDir)
+    mkdir(targetOutputDir)
+end
+
 %perform conversion
 createRawOCTSubjectDirectoryStructure(rawSubjDataDir,targetOutputDir, centroidCSVPath);
 
