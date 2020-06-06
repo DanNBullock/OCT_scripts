@@ -31,32 +31,32 @@ NOTE: Each file in subjDataDir should be accounted for in this csv file. This fu
 
 (the following description of how to compute the position relates to preprocessing that can/should be done prior to use of this conversion function)
 
-Assuming that you have a csv table arranged thusly:
-
-| Filename | Eye | slice | position | Size X pixel | Size x mm | Position on HEE |
-| --- | --- | --- | --- | --- | --- | --- |
-
-Size X pixels and X mm are determined by the OCT scan parameters and may be identical across all images. On the OCT software, such as Heidelberg, identify the foveal centre in the original image. Record the slice this is found in. The final column contains the precise X location of the foveal centre. The pixel index (position) is then calculated by (SizeXpixel / SizeXmm) \* Position on HEE.
+> Assuming that you have a csv table arranged thusly:
+> 
+> | Filename | Eye | slice | position | Size X pixel | Size x mm | Position on HEE |
+> | --- | --- | --- | --- | --- | --- | --- |
+> 
+> Size X pixels and X mm are determined by the OCT scan parameters and may be identical across all images. On the OCT software, such as Heidelberg, identify the foveal centre in the original image. Record the slice this is found in. The final column contains the precise X location of the foveal centre. The pixel index (position) is then calculated by (SizeXpixel / SizeXmm) \* Position on HEE.
 
 # Function use
 
 Once the input data are appropriately formatted and structured you may now use the createRawOCTSubjectDirectoryStructure function in the manner described by the function documentation:
 
-createRawOCTSubjectDirectoryStructure(subjDataDir,targetOutputDir, centroidCSVPath)
-
-This is a function that is used to create a subject level directory structure for OCT data analysis. Previously, centroid data was kept in a separate, group level file (input here as centroidCSVPath) and all subject&#39;s data were contained within the same directory. However, for cloud/parallel processing purposes group level files like this are not ideal. As such, this function creates a directory structure with the raw input data and the associated centroid file.
-
-INPUTS:
-
-subjDataDir: The directory that contains the subject/eye specific data. Should contain no files other than the relevant CSVs. Directory can contain sub-directories, though this function will not search for files within them.
-
-targetOutputDir: the directory that the output of this function should be saved to. If not specified creates an output directory (&#39;primaryOutput&#39;) within the \&lt;subjDataDir\&gt; directory
-
-centroidCSVPath: path to the CSV file containing the data indicating the foveal centroid of the eye.
-
-OUTPUTS:
-
-none, saves output CSVs to specified directory
+> createRawOCTSubjectDirectoryStructure(subjDataDir,targetOutputDir, centroidCSVPath)
+> 
+> This is a function that is used to create a subject level directory structure for OCT data analysis. Previously, centroid data was kept in a separate, group level file (input here as centroidCSVPath) and all subject&#39;s data were contained within the same directory. However, for cloud/parallel processing purposes group level files like this are not ideal. As such, this function creates a directory structure with the raw input data and the associated centroid file.
+>
+> INPUTS:
+> 
+> subjDataDir: The directory that contains the subject/eye specific data. Should contain no files other than the relevant CSVs. Directory can contain sub-directories, though this function will not search for files within them.
+> 
+> targetOutputDir: the directory that the output of this function should be saved to. If not specified creates an output directory (&#39;primaryOutput&#39;) within the \&lt;subjDataDir\&gt; directory
+> 
+> centroidCSVPath: path to the CSV file containing the data indicating the foveal centroid of the eye.
+>
+> OUTPUTS:
+>
+> none, saves output CSVs to specified directory
 
 Having described the input structure and formatting previously, we now move on to describing the output.
 
@@ -66,10 +66,9 @@ The output directory structuring will be found in the path specified by targetOu
 
 For each eye-CSV (i.e. OD or OS) in the input directory associated with this subject, a corresponding [eye]\_raw.csv file and a [eye]\_centroid.csv. It is not assumed that each subject has data for each eye. Thus for a standard subject (with both eyes) with subject number 001 we would expect the directory contents to looks as follows:
 
-[001]$ dir
+>[001]$ dir
+>
+> OD\_raw.csv OD\_centroid.csv OS\_raw.csv OS\_centroid.csv
 
-OD\_raw.csv OD\_centroid.csv OS\_raw.csv OS\_centroid.csv
-
-[001]$
 
 These files can then be uploaded using the brainlife interface in accordance with the datatype norms here ([https://brainlife.io/datatype/5ebe0bbbb969982124072325/edit](https://brainlife.io/datatype/5ebe0bbbb969982124072325/edit))
