@@ -112,12 +112,12 @@ for iInputFiles = 1:length(csvpaths) %Begins by iterating over subjects
     currentYVal=centroidTable.slice(locationFileRowIndex); 
     
     %generate filename for raw data object
-    newFileName=fullfile(currentSubjDirectory,strcat(eye{iInputFiles},'_Raw.csv'));
+    newFileName=fullfile(currentSubjDirectory,strcat(eye{iInputFiles},'_raw.csv'));
     % copy the file over
     copyfile(csvpaths{iInputFiles}, newFileName)
 
     %create simple file for centroid coordinate storage.
-    eyeCentroidFileName=strcat(currentSubjDirectory,'/',eye{iInputFiles},'centroid.csv');
+    eyeCentroidFileName=strcat(currentSubjDirectory,'/',eye{iInputFiles},'_centroid.csv');
     writematrix([currentXVal currentYVal],eyeCentroidFileName);
     
     
