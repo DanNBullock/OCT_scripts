@@ -8,7 +8,7 @@ There are two primary input categories for createRawOCTSubjectDirectoryStructure
 
 Next we describe the actual format and content of these inputs
 
-## Voxelron data directory
+## Voxeleron data directory
 
 The data input via the subjDataDir variable corresponds to the Voxelron OCT data. The subjDataDir variable is, as described by the createRawOCTSubjectDirectoryStructure function documentation:
 
