@@ -8,7 +8,7 @@
 
 **Lab Directors**
 
-- Franco Pestilli ([pestilli@utexas.edu(mailto:pestilli@utexas.edu)) - The University of Texas at Austin
+- Franco Pestilli ([pestilli@utexas.edu](mailto:pestilli@utexas.edu)) - The University of Texas at Austin
 - Holly Bridge (holly.bridge@ndcn.ox.ac.uk)  -  University of Oxford
 
 
