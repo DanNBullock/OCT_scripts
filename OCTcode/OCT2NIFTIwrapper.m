@@ -22,7 +22,7 @@ function OCTNIFTIout=OCT2NIFTIwrapper(path2RawSubjectCSV,path2CentroidFile)
 %  ******* [company name]  ***** [format] position data, Y to slice data,
 %  and Z to layer data.  The equivalent of the ACPC origin is the centroid
 %  in path2CentroidFile for the specified subject
-
+%
 %EXAMPLE DATA PATHS
 %path2RawSubjectCSV='/N/u/dnbulloc/Carbonate/OCT_Data/Data/001_OD_T.csv';
 %path2CentroidFile='/N/u/dnbulloc/Carbonate/OCT_Data/Location/Location.csv';
@@ -59,5 +59,16 @@ origin=[centroidPosition,centroidSlice,1];
 %NOTE: this doesn't actually appear to be taking in the origin information
 %appropriately, debug this at a later point.
 OCTNIFTIout = make_nii(niftiDataStruc, voxel_size, origin);
+
+%temporary workaround:
+%because the nifti_tools package doesn't seem to set the header right, here
+%we do it manually.
+
+OCTNIFTIout.hdr.hist.qoffset_x = centroidPosition;
+OCTNIFTIout.hdr.hist.hist.qoffset_y = centroidSlice;
+OCTNIFTIout.hdr.hist.hist.qoffset_z = 1;
+OCTNIFTIout.hdr.hist.hist.srow_x = [voxel_size(1) 0 0 centroidPosition];
+OCTNIFTIout.hdr.hist.hist.srow_y = [0 voxel_size(2) 0 centroidSlice];
+OCTNIFTIout.hdr.hist.hist.srow_z = [0 0 voxel_size(3) 1];
 
 end
