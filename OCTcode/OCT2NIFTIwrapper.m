@@ -65,10 +65,10 @@ OCTNIFTIout = make_nii(niftiDataStruc, voxel_size, origin);
 %we do it manually.
 
 OCTNIFTIout.hdr.hist.qoffset_x = centroidPosition;
-OCTNIFTIout.hdr.hist.hist.qoffset_y = centroidSlice;
-OCTNIFTIout.hdr.hist.hist.qoffset_z = 1;
-OCTNIFTIout.hdr.hist.hist.srow_x = [voxel_size(1) 0 0 centroidPosition];
-OCTNIFTIout.hdr.hist.hist.srow_y = [0 voxel_size(2) 0 centroidSlice];
-OCTNIFTIout.hdr.hist.hist.srow_z = [0 0 voxel_size(3) 1];
+OCTNIFTIout.hdr.hist.qoffset_y = centroidSlice;
+OCTNIFTIout.hdr.hist.qoffset_z = 1;
+OCTNIFTIout.hdr.hist.srow_x = [voxel_size(1) 0 0 centroidPosition];
+OCTNIFTIout.hdr.hist.srow_y = [0 voxel_size(2) 0 centroidSlice];
+OCTNIFTIout.hdr.hist.srow_z = [0 0 voxel_size(3) 1];
 
 end
