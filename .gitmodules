@@ -1,0 +1,3 @@
+[submodule "nifti_tools"]
+	path = nifti_tools
+	url = git@github.com:francopestilli/nifti_tools.git
