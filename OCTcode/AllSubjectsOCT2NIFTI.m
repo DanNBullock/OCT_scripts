@@ -28,7 +28,7 @@ for iCsvFiles=1:length(subjectCsvFilePaths)
     %save the nifti
     [~,currentSubjLabel,~]=fileparts(currentCsv);
     %set current nifti path
-    currentNiftiPath=strcat(outputDir,currentSubjLabel,'.nii');
+    currentNiftiPath=fullfile(outputDir,[currentSubjLabel,'.nii']);
     %save it down
     save_nii(OCTNIFTIout, currentNiftiPath)
 end
