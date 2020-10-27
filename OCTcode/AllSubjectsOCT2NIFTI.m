@@ -22,9 +22,9 @@ subjectCsvFilePaths=csvDirContentNames(~[rawDirContents.isdir]);
 %iterate across csv files
 for iCsvFiles=1:length(subjectCsvFilePaths)
     %get current path name
-    currentCsv=strcat(path2RawSubjectDir,subjectCsvFilePaths{iCsvFiles});
+    currentCsv=fullfile(path2RawSubjectDir,subjectCsvFilePaths{iCsvFiles});
     %make the nifti
-    OCTNIFTIout=OCT2NIFTIwrapper(path2RawSubjectCSV,path2CentroidFile);
+    OCTNIFTIout=OCT2NIFTIwrapper(currentCsv,path2CentroidFile);
     %save the nifti
     [~,currentSubjLabel,~]=fileparts(currentCsv);
     %set current nifti path
