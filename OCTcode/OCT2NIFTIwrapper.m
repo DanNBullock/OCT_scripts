@@ -48,7 +48,29 @@ niftiDataStruc=parseCsvExport(path2RawSubjectCSV);
 %HUGE ASSUMPTION:  we're going to initialize this as isometric, even though
 %its not actually, we won't be doing rotations, so this will probably be
 %fine
-voxel_size=[1,1,1];
+%11/25/2020 UPDATE:  Now detecting dimensions
+%voxel_size=[1,1,1];
+%get x mm span from table
+%NOTE: apparently matlab readtable eliminates spaces?  Or maybe the table
+%column headers have been changed?  For standardization/stability purposes,
+%column headers SHOULD NOT be changed.
+xmmSpan=centroidTable{find(strcmp(currSubjFile,centroidTable.Filename)),'SizeXMm'};
+%get x pixel span from table
+xPixelSpan=centroidTable{find(strcmp(currSubjFile,centroidTable.Filename)),'SizeXPixel'};
+%find mm per pixel
+xVoxelSize=xmmSpan/xPixelSpan;
+%HUGE ASSUMPTION (11/25/2020): assuming visual field is isometric (i.e. a circle rather
+%than an elipsoid) 20 degrees x = 20 degrees y.  As such we should could
+%theoretically assume that size x mm = size y mm.
+
+%Looking at the input data, it appears this is always 49, but maybe it
+%isnt?
+standardSlice=49;
+%now divide in the same way that we did with x to get the mm per y pixel
+yVoxelSize=xmmSpan/standardSlice;
+%hardcoded from assumed max thickness val
+zVoxelSize=.1;
+voxel_size=[xVoxelSize,yVoxelSize,zVoxelSize];
 
 %we're basing the orign off of the x and y centroid, and just arbitrarily
 %setting the Z centroid at 1, as this is the first data entry in that

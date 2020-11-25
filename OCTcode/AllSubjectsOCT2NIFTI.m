@@ -1,5 +1,5 @@
 %set path appropriately.  Comment out if you'd like
-path2Repo='/N/u/dnbulloc/Carbonate/OCT_scripts';
+path2Repo='/N/u/dnbulloc/Carbonate/gitProjects/OCT_scripts';
 addpath(genpath(path2Repo))
 
 %path to the raw subject data directory
