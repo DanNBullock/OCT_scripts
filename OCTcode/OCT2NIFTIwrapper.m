@@ -66,8 +66,11 @@ xVoxelSize=xmmSpan/xPixelSpan;
 %Looking at the input data, it appears this is always 49, but maybe it
 %isnt?
 standardSlice=49;
+%UPDATE 11/27/2020
+%Per Jasleen:  Y span is a standard 6.8 mm
+ymmSpan=6.8;
 %now divide in the same way that we did with x to get the mm per y pixel
-yVoxelSize=xmmSpan/standardSlice;
+yVoxelSize=ymmSpan/standardSlice;
 %hardcoded from assumed max thickness val
 zVoxelSize=.1;
 voxel_size=[xVoxelSize,yVoxelSize,zVoxelSize];
