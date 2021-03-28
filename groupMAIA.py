@@ -13,10 +13,13 @@ import os
 from os import listdir
 from os.path import isfile, join
 import scipy
+
+import matplotlib
+matplotlib.use('Agg')
 import matplotlib.pyplot as plt
 
-currentCSVPath='/Users/plab/Downloads/exampleMAIA/004.txt'
-inputDir='/Users/plab/Downloads/exampleMAIA/'
+#currentCSVPath='/Users/plab/Downloads/exampleMAIA/004.txt'
+#inputDir='/Users/plab/Downloads/exampleMAIA/'
 
 #load a csv and convert the data to radius & value
 def loadAndConvertMAIA(currentCSVPath):
@@ -114,7 +117,7 @@ def MAIAradarPlot(convertedMAIAtable):
     #ax.set_rticks([0.5, 1, 1.5, 2]) 
     polarFig=ax.contourf(vFieldRange, eccentricityRange, reshapeMeans, levels=np.linspace(np.min(convertedMAIAtable.value.to_numpy()),np.max(convertedMAIAtable.value.to_numpy()),100))
     plt.colorbar(polarFig)
-    plt.show()
+    #plt.show()
     return fig
 
 def MAIAscatterPlot(convertedMAIAtable):
@@ -125,11 +128,10 @@ def MAIAscatterPlot(convertedMAIAtable):
     fig, axes = plt.subplots(1, 1)
 
     sns.scatterplot(x="x_deg", y="y_deg", data=convertedMAIAtable, hue="value", cmap="viridis",s=300,ax=axes)
-   
 
     plt.ylabel('Vertical eccentricity')
     plt.xlabel('Horizontal eccentricity')
-    plt.show()
+    #plt.show()
     return fig
 
 def computeMAIAonDir(inputDir):
