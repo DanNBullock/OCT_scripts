@@ -6,6 +6,10 @@ Created on Tue Feb 23 15:08:25 2021
 @author: dan
 """
 
+import matplotlib
+matplotlib.use('Agg')
+import matplotlib.pyplot as plt
+
 import pandas as pd
 import numpy as np
 import seaborn as sns
@@ -13,10 +17,6 @@ import os
 from os import listdir
 from os.path import isfile, join
 import scipy
-
-import matplotlib
-matplotlib.use('Agg')
-import matplotlib.pyplot as plt
 
 #currentCSVPath='/Users/plab/Downloads/exampleMAIA/004.txt'
 #inputDir='/Users/plab/Downloads/exampleMAIA/'
