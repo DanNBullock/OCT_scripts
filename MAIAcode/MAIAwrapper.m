@@ -45,4 +45,7 @@ outputDir='/N/u/dnbulloc/Carbonate/OCT_Data/MAIAoutput';
 sectionIndexes={2:5;6:17;18:37};
 %  
 computeGroupMAIAmeans(subjectDir,keyFile,sectionIndexes,outputDir);
+%or for an individual level output
+%computeSubjectMAIAmeansFromDir(subjectDir,sectionIndexes,keyFile,outputDir)
+
 % end of wrapper

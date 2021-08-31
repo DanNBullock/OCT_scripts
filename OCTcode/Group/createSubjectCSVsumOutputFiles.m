@@ -1,18 +1,16 @@
-function createCSVsumOutputFiles(subjDataDir,targetOutputDir,layerIndexSequences,analysesNames)
-%createCSVsumOutputFiles(subjDataDir,targetOutputDir,layerIndexSequences,analysesNames)
+function createSubjectCSVsumOutputFiles(sourceFiles,targetOutputDir, layerIndexSequences,analysesNames)
+%createSubjectCSVsumOutputFiles(sourceFiles,targetOutputDir, layerIndexSequences,analysesNames)
 %
 %This is a semi-generalized function which creates the desired output csv
-%files for all subjects/eyes in an input directory, <subjDataDir>.  Presumes input CSV
+%files for a subject in an input list of files.  Presumes input CSV
 %files are in the format necessary for parseCsvExport. Outputs a csv which
 %sums across each layer set specified in <layerIndexSequences>, named in
 %accordance with input to <analysesNames>.  Saved to <targetOutputDir>.
 %
 %  INPUTS:
 %
-%  subjDataDir:  The directory that contains the subject/eye specific data.
-%  Should contain no files other than the relevant CSVs.  Directory can
-%  contain sub-directories, though this function will not search for files
-%  within them.
+%  sourceFiles:  A cell array containing full file names/paths to the files
+%  that the layer sequence sums are to be extracted from.
 %
 %  targetOutputDir:  the directory that the output of this function should
 %  be saved to.  If not specified creates an output directory
@@ -31,20 +29,14 @@ function createCSVsumOutputFiles(subjDataDir,targetOutputDir,layerIndexSequences
 %
 % Adapted from code produced by Dan Bullock and Jasleen Jolley 05 Nov 2019
 % Extensive rewrite/functionalization by Dan Bullock 22 Jan 2020
-%
+%  Rewritten for subject level use by Dan Bullock Mar 12, 2020
+
 %% Subfunctions
 %
 %  parseCsvExport.m
 %
 %%  Begin Code
 % initialize relevant variables and perform checks
-
-% set output directory to subdirectory of <subjDataDir> if it isn't defined, 
-if isempty(targetOutputDir)
-    targetOutputDir=fullfile(subjDataDir,'primaryOutput');
-else
-    %do nothing
-end
 
 %create output directory if it doesnt exist
 if ~isfolder(targetOutputDir)
@@ -64,10 +56,9 @@ end
 %% Begin file parsing and output creation
 
 %extract the contents of the input <subjDataDir>
-subjectDirContents = dir(subjDataDir);
 
 %extract the file names of the contents of <subjDataDir>
-fileNames = {subjectDirContents(~[subjectDirContents(:).isdir]).name};
+fileNames = sourceFiles;
 
 % Extract relevant information from the filenames
 for iFiles=1:length(fileNames)
@@ -101,7 +92,7 @@ for isubjects = 1:length(csvpaths) %Begins by iterating over subjects
         %uses <currentLayers> to index across the relevant layers of <curcsv>, notably in the third dimension.  Subsequently sums those layers. 
         outputArray = [sum(curcsv(:,:,currentLayers),3)]';
         %here we generate the name for this specific analysis/synthesis output, using <subjectID>, <eye>, and <analysesNames>
-        outPutName=strcat(subjectID{isubjects},'_',eye{isubjects},'_',analysesNames{iAnalyses});
+        outPutName=strcat(eye{isubjects},'_',analysesNames{iAnalyses});
         %append .csv
         outputCSVname=strcat(outPutName,'.csv');
         %generate filepath name for output
